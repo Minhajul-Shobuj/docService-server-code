@@ -44,7 +44,7 @@ app.post('/testOrders', async (req, res) => {
     res.json(result)
 });
 //post doctors appoinment
-app.post('/docappo', async (req, res) => {
+app.post('/appoinments', async (req, res) => {
     const order = req.body;
     const result = await docAppoCollection.insertOne(order);
     res.json(result)
@@ -57,11 +57,11 @@ app.get('/testOrders', async (req, res) => {
     res.json(testsOrders);
 });
 //get appoinment Orders
-app.get('/docappo', async (req, res) => {
+app.get('/appoinments', async (req, res) => {
     const query = {};
     const cursor = docAppoCollection.find(query);
-    const docAppo = await cursor.toArray();
-    res.json(docAppo);
+    const appoinments = await cursor.toArray();
+    res.json(appoinments);
 });
     }
     finally {
