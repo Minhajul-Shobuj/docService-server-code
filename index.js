@@ -17,6 +17,7 @@ async function run() {
     try {
         await client.connect();
         const database = client.db('DocService');
+        const userCollection=database.collection('users');
         const doctorsCollection = database.collection('doctors');
         const testCollection = database.collection('tests');
         const docAppoCollection = database.collection('docAppo');
@@ -37,6 +38,20 @@ async function run() {
             res.json(tests);
         });
 
+               //post user
+               app.post('/users', async (req, res) => {
+                const user = req.body;
+                const result = await userCollection.insertOne(user);
+                res.json(result);
+            });
+    
+            //get user data
+            app.get('/users', async (req, res) => {
+                const query = {};
+                const cursor = userCollection.find(query);
+                const users = await cursor.toArray();
+                res.json(users);
+            });
 //post test order
 app.post('/testOrders', async (req, res) => {
     const order = req.body;
@@ -63,6 +78,44 @@ app.get('/appoinments', async (req, res) => {
     const appoinments = await cursor.toArray();
     res.json(appoinments);
 });
+app.get('/appoinments/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email: email };
+    const result = await docAppoCollection.find(query).toArray();
+    res.json(result);
+});
+app.get('/testOrders/:email', async (req, res) => {
+    const email = req.params.email;
+    const query = { email: email };
+    const result = await testOrdersCollection.find(query).toArray();
+    res.json(result);
+});
+//delete orders
+app.delete('/deleteOrder/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await testOrdersCollection.deleteOne(query);
+    res.json(result);
+})
+app.delete('/deleteOrder/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+    const result = await docAppoCollection.deleteOne(query);
+    res.json(result);
+})
+//admin
+app.get('/users/:email', async (req, res) => {
+    const userEmail = req.params.email
+    const query = { email: userEmail }
+    const result = await userCollection.findOne(query)
+    let isAdmin = false;
+    if (result?.role == "admin") {
+        isAdmin = true
+    }
+    res.json({ admin: isAdmin })
+
+})
+
     }
     finally {
         // await client.close
