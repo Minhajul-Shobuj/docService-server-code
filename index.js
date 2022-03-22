@@ -72,7 +72,7 @@ app.get('/appoinments', async (req, res) => {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('docService server')
+    res.send('docService server is running')
 });
 app.listen(port, (req, res) => {
     console.log(`listening to port ${port}`)
